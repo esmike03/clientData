@@ -25,14 +25,14 @@
 <body class="flex items-center justify-center min-h-screen bg-gray-500 font-['Roboto']">
     <div class="max-w-4xl mx-auto bg-gray-100 p-6 rounded-lg shadow-lg">
         <div class="flex flex-col items-center mb-4 w-full">
-            <img src="{{ asset('images/xentra1.png') }}" class="h-10 mb-2" />
+            <img src="{{ asset('images/xentra1.png') }}" class="h-16 mb-0" />
             <p class="text-center text-[6px] leading-tight">
                 WPI Bldg, St. Peter Street, Dona Maria Village 1, <br>
                 Punta Princesa, Cebu City, Cebu 6300
             </p>
         </div>
 
-        <h1 class="text-center mb-2">Client Data Sheet</h1>
+        <h1 class="text-center mb-2 uppercase text-xl font-bold">Client Data Sheet</h1>
 
         <form id="client-data-form" action="{{ route('form.submit') }}" method="POST" enctype="multipart/form-data">
             @csrf

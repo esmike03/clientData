@@ -26,6 +26,7 @@ class Form extends Model
         'sketch_map',
         'prepared_by',
         'prepared_signature',
-        'status' // New fields added
+        'status',
+        'approved_by', // New fields added
     ];
 }

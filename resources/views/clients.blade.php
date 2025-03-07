@@ -17,8 +17,8 @@
 <body>
     <div class="container mx-auto px-4 py-6">
         <div class="flex justify-between items-center content-center mb-6">
-            <h1 class="text-2xl font-bold mb-4">Client Data List</h1>
-            <a href="/approved-clients" class="text-right bg-gray-500 p-2 rounded-md text-orange-100 cursor-pointer hover:scale-105 transition-transform">Approved Clients</a>
+            <h1 class="text-2xl font-bold mb-4">Approved Clients List</h1>
+            <a href="/client-data" class="text-right bg-orange-500 p-2 rounded-md text-orange-100 cursor-pointer hover:scale-105 transition-transform">Pending Clients</a>
         </div>
 
         @if (session('success'))
@@ -29,11 +29,11 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             @foreach ($clientData as $data)
-                <div class="bg-white border-l-2 border-orange-500 hover:scale-110 transition-transform cursor-pointer shadow-md rounded-lg p-4 flex items-center space-x-4"
+                <div class="bg-white border-l-2 border-green-500 hover:scale-110 transition-transform cursor-pointer shadow-md rounded-lg p-4 flex items-center space-x-4"
                     onclick='showModal(@json($data))'>
                     <!-- Icon Section -->
                     <div class="flex justify-center items-center w-20">
-                        <i class="fa fa-file text-5xl text-orange-500"></i>
+                        <i class="fa fa-file text-5xl text-green-500"></i>
                     </div>
 
                     <!-- Information Section -->
@@ -62,11 +62,10 @@
 
     <script>
         function showModal(data) {
-            // Build HTML content for modal
-            let html = `
+          // Build HTML content for modal
+          let html = `
             <div class="text-left space-y-2">
               <div class="grid grid-cols-2 gap-2 text-xs lg:text-sm">
-
                 <p>Agent Code:<strong> ${data.agent_code}</strong></p>
                 <p>Client Name:<strong> ${data.client_name}</strong></p>
                 <p>Complete Address:<strong> ${data.address_name}</strong></p>
@@ -85,67 +84,35 @@
             </div>
           `;
 
-            // Append images if available
-            if (data.sketch_map) {
-                html +=
-                    `<p class="mt-2 text-xs lg:text-lg text-center"><strong>Sketch Map</strong><br><img src="${data.sketch_map}" alt="Sketch Map" class="w-full mb-4 border-1 rounded-md mx-auto"></p>`;
-            }
-            if (data.prepared_signature) {
-                html +=
-                    `<p class="text-right text-xs lg:text-lg mr-6">Prepared By:<br><strong> ${data.prepared_by}</strong></p>
-                     <p class="mt-0 text-xs lg:text-lg text-right"><br><img src="${data.prepared_signature}" alt="Signature" class="w-26 h-auto ml-auto"></p>`;
-            }
+          // Append images if available
+          if (data.sketch_map) {
+            html += `
+              <p class="mt-2 text-xs lg:text-lg text-center">
+                <strong>Sketch Map</strong><br>
+                <img src="${data.sketch_map}" alt="Sketch Map" class="w-full mb-4 border-1 rounded-md mx-auto">
+              </p>`;
+          }
+          if (data.prepared_signature) {
+            html += `
+              <p class="text-right text-xs lg:text-lg mr-6">
+                Prepared By:<br><strong> ${data.prepared_by}</strong>
+              </p>
+              <p class="mt-0 text-xs lg:text-lg text-right">
+                <br><img src="${data.prepared_signature}" alt="Signature" class="w-26 h-auto ml-auto">
+              </p>`;
+          }
 
-            // Show modal using SweetAlert2 with Approve and Close buttons
-            Swal.fire({
-                title: 'Client Data Details',
-                html: html,
-                width: '600px',
-                showCancelButton: true,
-                confirmButtonText: 'Approve',
-                cancelButtonText: 'Close'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Get CSRF token from meta tag
-                    const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-                    // Send AJAX request to update status
-                    fetch('/approve-data', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': token
-                            },
-                            body: JSON.stringify({
-                                id: data.id,
-                                status: 'approved'
-                            })
-                        })
-                        .then(response => {
-                            if (response.ok) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Approved',
-                                    text: 'The data has been approved!',
-                                    timer: 2000,
-                                    showConfirmButton: false
-                                });
-                                // Optionally update the UI or reload the page here
-                            } else {
-                                throw new Error('Approval failed');
-                            }
-                        })
-                        .catch(error => {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: error.message
-                            });
-                        });
-                }
-            });
+          // Show modal using SweetAlert2 with only a Close button
+          Swal.fire({
+            title: 'Client Data Details',
+            html: html,
+            width: '600px',
+            confirmButtonText: 'Close',   // Single close button
+            showCancelButton: false       // Hide the cancel button
+          });
         }
-    </script>
+      </script>
+
 
 
 </body>

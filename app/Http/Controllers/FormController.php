@@ -45,27 +45,37 @@ class FormController extends Controller
 
     public function index()
     {
-        $clientData = Form::orderBy('created_at', 'desc')->get();
+        $clientData = Form::where('status', 'pending')
+                          ->orderBy('created_at', 'desc')
+                          ->get();
         return view('index', compact('clientData'));
     }
 
-public function approveData(Request $request)
-{
-    // Find the client data by ID
-    $data = Form::find($request->id);
-
-    if (!$data) {
-        return response()->json(['message' => 'Data not found.'], 404);
+    public function clients()
+    {
+        $clientData = Form::where('status', 'approved')
+                          ->orderBy('created_at', 'desc')
+                          ->get();
+        return view('clients', compact('clientData'));
     }
 
-    // Update the status to approved
-    $data->status = 'approved';
-    $data->save();
 
-    // Send the email - you can specify the recipient here (or use $data->email if available)
-    Mail::to('sarabiaearlmike14@gmail.com')->send(new \App\Mail\ClientDataApproved($data));
+    public function approveData(Request $request)
+    {
+        // Find the client data by ID
+        $data = Form::find($request->id);
 
-    return response()->json(['message' => 'Approved and email sent successfully.'], 200);
-}
+        if (!$data) {
+            return response()->json(['message' => 'Data not found.'], 404);
+        }
 
+        // Update the status to approved
+        $data->status = 'approved';
+        $data->save();
+
+        // Send the email - you can specify the recipient here (or use $data->email if available)
+        Mail::to('sarabiaearlmike14@gmail.com')->send(new \App\Mail\ClientDataApproved($data));
+
+        return response()->json(['message' => 'Approved and email sent successfully.'], 200);
+    }
 }

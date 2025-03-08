@@ -41,7 +41,7 @@
       @forelse ($clientData as $data)
         <!-- Each card includes the "client-card" class and relative positioning for the delete button -->
         <div id="card-{{ $data->id }}"
-          class="client-card relative bg-white border-l-2 border-orange-500 hover:scale-110 transition-transform cursor-pointer shadow-md rounded-lg p-4 flex items-center space-x-4"
+          class="client-card relative bg-white border-l-2 border-green-500 hover:scale-110 transition-transform cursor-pointer shadow-md rounded-lg p-4 flex items-center space-x-4"
           onclick='showModal(@json($data))'>
           <!-- Delete Button on the Card -->
           <button onclick="event.stopPropagation(); deleteCard({{ $data->id }})"
@@ -51,7 +51,7 @@
 
           <!-- Icon Section -->
           <div class="flex justify-center items-center w-20">
-            <i class="fa fa-file text-5xl text-orange-500"></i>
+            <i class="fa fa-file text-5xl text-green-500"></i>
           </div>
 
           <!-- Information Section -->

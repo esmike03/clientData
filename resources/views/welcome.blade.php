@@ -52,8 +52,9 @@
                 <!-- Date -->
                 <div>
                     <label class="text-gray-800 text-sm font-semibold">Date:</label>
-                    <input type="date" name="date" id="date" value="{{ old('date') }}"
+                    <input type="date" name="date" id="date" value="{{ old('date', date('Y-m-d')) }}"
                         class="rounded-md border shadow-md border-gray-200 p-2 w-full bg-white">
+
                 </div>
 
                 <!-- Agent Code -->

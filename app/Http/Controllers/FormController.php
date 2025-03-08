@@ -80,4 +80,20 @@ class FormController extends Controller
 
         return response()->json(['message' => 'Approved and email sent successfully.'], 200);
     }
+
+    public function deleteData(Request $request)
+    {
+        // Find the client data record by ID
+        $clientData = Form::find($request->id);
+
+        if (!$clientData) {
+            return response()->json(['error' => 'Client data not found.'], 404);
+        }
+
+        // Delete the record
+        $clientData->delete();
+
+        // Return a JSON success response
+        return response()->json(['success' => 'Client data deleted successfully.']);
+    }
 }

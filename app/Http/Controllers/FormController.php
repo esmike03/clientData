@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Form;
+use App\Models\Agent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -73,8 +74,9 @@ class FormController extends Controller
         $data->status = 'approved';
         $data->save();
 
+        $email = Agent::where('agent_code', $data->agent_code)->first();
         // Send the email - you can specify the recipient here (or use $data->email if available)
-        Mail::to('sarabiaearlmike14@gmail.com')->send(new \App\Mail\ClientDataApproved($data));
+        Mail::to(['sarabiaearlmike14@gmail.com', $email->email])->send(new \App\Mail\ClientDataApproved($data));
 
         return response()->json(['message' => 'Approved and email sent successfully.'], 200);
     }

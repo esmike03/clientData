@@ -1,153 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Client Data List</title>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="icon" type="image/png" href="{{ asset('images/xentra6.png') }}">
-    @vite('resources/css/app.css')
-    @vite('resources/js/app.js')
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="csrf-token" content="{{ csrf_token() }}" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Client Data List</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="icon" type="image/png" href="{{ asset('images/xentra6.png') }}" />
+  @vite('resources/css/app.css')
+  @vite('resources/js/app.js')
 </head>
-
 <body>
-    <div class="container mx-auto px-4 py-6">
-        <div class="flex justify-between items-center content-center mb-6">
-            <h1 class="text-2xl font-bold mb-4">Client Data List</h1>
-            <a href="/approved-clients" class="text-right bg-gray-500 p-2 rounded-md text-orange-100 cursor-pointer hover:scale-105 transition-transform">Approved Clients</a>
-        </div>
-
-        @if (session('success'))
-            <div class="bg-green-200 text-green-700 p-3 rounded mb-4">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            @foreach ($clientData as $data)
-                <div class="bg-white border-l-2 border-orange-500 hover:scale-110 transition-transform cursor-pointer shadow-md rounded-lg p-4 flex items-center space-x-4"
-                    onclick='showModal(@json($data))'>
-                    <!-- Icon Section -->
-                    <div class="flex justify-center items-center w-20">
-                        <i class="fa fa-file text-5xl text-orange-500"></i>
-                    </div>
-
-                    <!-- Information Section -->
-                    <div class="flex-1">
-                        <div class="mb-1">
-
-                            <span
-                                class="text-gray-600">{{ \Carbon\Carbon::parse($data->date)->format('F j, Y') }}</span>
-
-                        </div>
-                        <div class="mb-1">
-                            <i class="fa fa-user-tag text-gray-400"></i>
-
-                            <span class="font-medium text-gray-600"> {{ $data->agent_code }}</span>
-                        </div>
-                        <div>
-                            <i class="fa fa-pen text-gray-400"></i>
-                            <span class="font-medium text-gray-600"> {{ $data->prepared_by }}</span>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-
+  <div class="container mx-auto px-4 py-6">
+    <div class="flex justify-between items-center content-center mb-6">
+      <h1 class="text-2xl font-bold mb-4">Client Data List</h1>
+      <a href="/approved-clients" class="text-right bg-gray-500 p-2 rounded-md text-orange-100 cursor-pointer hover:scale-105 transition-transform">Approved Clients</a>
     </div>
 
-    <script>
-        function showModal(data) {
-            // Build HTML content for modal
-            let html = `
-            <div class="text-left space-y-2">
-              <div class="grid grid-cols-2 gap-2 text-xs lg:text-sm">
+    @if (session('success'))
+      <div class="bg-green-200 text-green-700 p-3 rounded mb-4">
+        {{ session('success') }}
+      </div>
+    @endif
 
-                <p>Agent Code:<strong> ${data.agent_code}</strong></p>
-                <p>Client Name:<strong> ${data.client_name}</strong></p>
-                <p>Complete Address:<strong> ${data.address_name}</strong></p>
-                <p>Contact:<strong> ${data.contact}</strong></p>
-                <p>Payment Term:<strong> ${data.payment_term}</strong></p>
-                <p>Payment Type:<strong> ${data.payment_type}</strong></p>
-              </div>
-              <p class="text-xs lg:text-sm">Discount/Deals:<strong> ${data.discount_deals}</strong></p>
-              <p class="text-xs lg:text-sm">Tie-up Pharmacy/Doctors:<strong> ${data.tie_up_pharmacy}</strong></p>
-              <p class="text-xs lg:text-sm">Rebates Given:<strong> ${data.rebates_given}</strong></p>
-              <div class="grid grid-cols-2 gap-2 text-xs lg:text-sm">
-                <p>Clinic Date:<strong> ${data.clinic_date}</strong></p>
-                <p>Delivery Date:<strong> ${data.deliver_date}</strong></p>
-                <p>Contact Person:<strong> ${data.contact_person}</strong></p>
-              </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        @forelse ($clientData as $data)
+        <!-- Assign an ID to each card using the data's id -->
+        <div id="card-{{ $data->id }}"
+             class="bg-white border-l-2 border-orange-500 hover:scale-110 transition-transform cursor-pointer shadow-md rounded-lg p-4 flex items-center space-x-4"
+             onclick='showModal(@json($data))'>
+          <!-- Icon Section -->
+          <div class="flex justify-center items-center w-20">
+            <i class="fa fa-file text-5xl text-orange-500"></i>
+          </div>
+
+          <!-- Information Section -->
+          <div class="flex-1">
+            <div class="mb-1">
+              <span class="text-gray-600">{{ \Carbon\Carbon::parse($data->date)->format('F j, Y') }}</span>
             </div>
-          `;
+            <div class="mb-1">
+              <i class="fa fa-user-tag text-gray-400"></i>
+              <span class="font-medium text-gray-600">
+                {{ $data->agent_code ?: 'Empty' }}
+              </span>
+            </div>
+            <div>
+              <i class="fa fa-pen text-gray-400"></i>
+              <span class="font-medium text-gray-600">
+                {{ $data->prepared_by ?: 'Empty' }}
+              </span>
+            </div>
+          </div>
+        </div>
+    @empty
+        <p class="text-center text-gray-500">No client data available.</p>
+    @endforelse
 
-            // Append images if available
-            if (data.sketch_map) {
-                html +=
-                    `<p class="mt-2 text-xs lg:text-lg text-center"><strong>Sketch Map</strong><br><img src="${data.sketch_map}" alt="Sketch Map" class="w-full mb-4 border-1 rounded-md mx-auto"></p>`;
-            }
-            if (data.prepared_signature) {
-                html +=
-                    `<p class="text-right text-xs lg:text-lg mr-6">Prepared By:<br><strong> ${data.prepared_by}</strong></p>
-                     <p class="mt-0 text-xs lg:text-lg text-right"><br><img src="${data.prepared_signature}" alt="Signature" class="w-26 h-auto ml-auto"></p>`;
-            }
+    </div>
+  </div>
 
-            // Show modal using SweetAlert2 with Approve and Close buttons
+  <script>
+    function showModal(data) {
+      // Build HTML content for modal
+      let html = `
+        <div class="text-left space-y-2">
+          <div class="grid grid-cols-2 gap-2 text-xs lg:text-sm">
+            <p>Agent Code:<strong> ${data.agent_code}</strong></p>
+            <p>Client Name:<strong> ${data.client_name}</strong></p>
+            <p>Complete Address:<strong> ${data.address_name}</strong></p>
+            <p>Contact:<strong> ${data.contact}</strong></p>
+            <p>Payment Term:<strong> ${data.payment_term}</strong></p>
+            <p>Payment Type:<strong> ${data.payment_type}</strong></p>
+          </div>
+          <p class="text-xs lg:text-sm">Discount/Deals:<strong> ${data.discount_deals}</strong></p>
+          <p class="text-xs lg:text-sm">Tie-up Pharmacy/Doctors:<strong> ${data.tie_up_pharmacy}</strong></p>
+          <p class="text-xs lg:text-sm">Rebates Given:<strong> ${data.rebates_given}</strong></p>
+          <div class="grid grid-cols-2 gap-2 text-xs lg:text-sm">
+            <p>Clinic Date:<strong> ${data.clinic_date}</strong></p>
+            <p>Delivery Date:<strong> ${data.deliver_date}</strong></p>
+            <p>Contact Person:<strong> ${data.contact_person}</strong></p>
+          </div>
+        </div>
+      `;
+
+      // Append images if available
+      if (data.sketch_map) {
+        html += `<p class="mt-2 text-xs lg:text-lg text-center">
+                    <strong>Sketch Map</strong><br>
+                    <img src="${data.sketch_map}" alt="Sketch Map" class="w-full mb-4 border-1 rounded-md mx-auto">
+                 </p>`;
+      }
+      if (data.prepared_signature) {
+        html += `<p class="text-right text-xs lg:text-lg mr-6">
+                    Prepared By:<br><strong> ${data.prepared_by}</strong>
+                 </p>
+                 <p class="mt-0 text-xs lg:text-lg text-right">
+                    <br><img src="${data.prepared_signature}" alt="Signature" class="w-26 h-auto ml-auto">
+                 </p>`;
+      }
+
+      // Show modal using SweetAlert2 with Approve and Close buttons
+      Swal.fire({
+        title: 'Client Data Details',
+        html: html,
+        width: '600px',
+        showCancelButton: true,
+        confirmButtonText: 'Approve',
+        cancelButtonText: 'Close'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Get CSRF token from meta tag
+          const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+          // Show loading modal with a spinner
+          Swal.fire({
+            title: 'Approving...',
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading();
+            }
+          });
+
+          // Send AJAX request to update status
+          fetch('/approve-data', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': token
+            },
+            body: JSON.stringify({
+              id: data.id,
+              status: 'approved'
+            })
+          })
+          .then(response => {
+            if (response.ok) {
+              // Remove the approved card from the DOM
+              const card = document.getElementById('card-' + data.id);
+              if (card) {
+                card.remove();
+              }
+              // Close the loading modal and show a success message
+              Swal.fire({
+                icon: 'success',
+                title: 'Approved',
+                text: 'The data has been approved!',
+                timer: 2000,
+                showConfirmButton: false
+              });
+            } else {
+              throw new Error('Approval failed');
+            }
+          })
+          .catch(error => {
             Swal.fire({
-                title: 'Client Data Details',
-                html: html,
-                width: '600px',
-                showCancelButton: true,
-                confirmButtonText: 'Approve',
-                cancelButtonText: 'Close'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Get CSRF token from meta tag
-                    const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-                    // Send AJAX request to update status
-                    fetch('/approve-data', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': token
-                            },
-                            body: JSON.stringify({
-                                id: data.id,
-                                status: 'approved'
-                            })
-                        })
-                        .then(response => {
-                            if (response.ok) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Approved',
-                                    text: 'The data has been approved!',
-                                    timer: 2000,
-                                    showConfirmButton: false
-                                });
-                                // Optionally update the UI or reload the page here
-                            } else {
-                                throw new Error('Approval failed');
-                            }
-                        })
-                        .catch(error => {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: error.message
-                            });
-                        });
-                }
+              icon: 'error',
+              title: 'Error',
+              text: error.message
             });
+          });
         }
-    </script>
-
-
+      });
+    }
+  </script>
 </body>
-
 </html>

@@ -70,14 +70,15 @@ class FormController extends Controller
             return response()->json(['message' => 'Data not found.'], 404);
         }
 
-        // Update the status to approved
-        $data->status = 'approved';
-        $data->save();
-
         $email = Agent::where('agent_code', $data->agent_code)->first();
         // Send the email - you can specify the recipient here (or use $data->email if available)
         Mail::to(['sarabiaearlmike14@gmail.com', $email->email])->send(new \App\Mail\ClientDataApproved($data));
 
+        // Update the status to approved
+        $data->status = 'approved';
+        $data->save();
+
+  
         return response()->json(['message' => 'Approved and email sent successfully.'], 200);
     }
 

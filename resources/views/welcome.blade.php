@@ -155,14 +155,14 @@
             <div class="flex justify-between mt-6">
                 <div></div>
                 <!-- Prepared By -->
-                <div class="w-1/2 pr-4">
+                <div class="w-full md:w-1/2 pr-4">
                     <label class="block font-bold"><strong class="text-gray-800 text-sm">Prepared By:</strong></label>
                     <input type="text" name="prepared_by" id="prepared_by" value="{{ old('prepared_by') }}"
                         class="bg-white shadow-md rounded-md border border-gray-200 w-full p-2 mb-2"
                         placeholder="Enter name">
 
                     <!-- Signature Pad -->
-                    <canvas id="preparedSignature" class="border border-gray-200 w-full h-24"></canvas>
+                    <canvas id="preparedSignature" class="border border-gray-200 w-full h-36"></canvas>
                     <input type="hidden" name="prepared_signature" id="prepared_signature">
                     <button type="button" onclick="clearSignature('preparedSignature', 'prepared_signature')"
                         class="text-red-500 text-sm mt-1"><i class="fa-solid fa-eraser"></i>

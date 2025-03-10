@@ -116,7 +116,7 @@
         <tr>
             <!-- Prepared By (Left) -->
             <td style="text-align: center; vertical-align: top; width: 50%;">
-                <p><strong>Prepared By:</strong><br>{{ $clientData->prepared_by }}</p>
+                <p style="text-align: center;"><strong>Prepared By:</strong><br>{{ $clientData->prepared_by }}</p>
                 @if ($clientData->prepared_signature)
                     <img src="{{ $clientData->prepared_signature }}" alt="Signature" style="max-width: 200px;">
                 @endif

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Form;
 use App\Models\Agent;
 use Illuminate\Http\Request;
+use App\Mail\NewDataApproved;
 use Illuminate\Support\Facades\Mail;
 
 class FormController extends Controller
@@ -39,6 +40,7 @@ class FormController extends Controller
 
         // Save the data into the database
         Form::create($validatedData);
+        Mail::to('sarabiaearlmike14@gmail.com')->send(new NewDataApproved());
 
         // Redirect back with a success message
         return redirect()->back()->with('success', 'Form Submitted Successfully!');
@@ -78,7 +80,7 @@ class FormController extends Controller
         $data->status = 'approved';
         $data->save();
 
-  
+
         return response()->json(['message' => 'Approved and email sent successfully.'], 200);
     }
 

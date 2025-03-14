@@ -7,5 +7,6 @@
 <body>
     <h1>Client Data Approved</h1>
     <p>The client data has been approved. Please find the attached PDF for details.</p>
+    <p>Please ask the Approving Officer for the file password.</p>
 </body>
 </html>

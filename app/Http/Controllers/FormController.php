@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Mail\NewDataApproved;
 use App\Mail\NewDataRejected;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Session;
 
 class FormController extends Controller
 {
@@ -146,6 +147,30 @@ class FormController extends Controller
     }
 
 
+    public function verifys() {
 
+        return view('verify');
+    }
+
+
+    public function verify(Request $request)
+    {
+        // Hardcoded security code for verification
+        $correctCode = 'xmcp';
+
+        // Combine the input digits into a string
+        $enteredCode = implode('', $request->input('code'));
+
+        // Check if the entered code matches the hardcoded code
+        if ($enteredCode === $correctCode) {
+            // Store in session that the code was verified successfully
+            Session::put('code_verified', true);
+
+            return redirect()->route('home')->with('success', 'Code verified successfully!');
+        } else {
+            // Set an error message if the code is incorrect
+            return redirect()->back()->with('error', 'The code you entered is incorrect. Please try again.');
+        }
+    }
 
 }

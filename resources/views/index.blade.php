@@ -71,25 +71,51 @@
         function showModal(data) {
             // Build HTML content for modal
             let html = `
-        <div class="text-left space-y-2">
-          <div class="grid grid-cols-2 gap-2 text-xs lg:text-sm">
-            <p>Agent Code:<strong> ${data.agent_code}</strong></p>
-            <p>Client Name:<strong> ${data.client_name}</strong></p>
-            <p>Complete Address:<strong> ${data.address_name}</strong></p>
-            <p>Contact:<strong> ${data.contact}</strong></p>
-            <p>Payment Term:<strong> ${data.payment_term}</strong></p>
-            <p>Payment Type:<strong> ${data.payment_type}</strong></p>
-          </div>
-          <p class="text-xs lg:text-sm">Discount/Deals:<strong> ${data.discount_deals}</strong></p>
-          <p class="text-xs lg:text-sm">Tie-up Pharmacy/Doctors:<strong> ${data.tie_up_pharmacy}</strong></p>
-          <p class="text-xs lg:text-sm">Rebates Given:<strong> ${data.rebates_given}</strong></p>
-          <div class="grid grid-cols-2 gap-2 text-xs lg:text-sm">
-            <p>Clinic Date:<strong> ${data.clinic_date}</strong></p>
-            <p>Delivery Date:<strong> ${data.deliver_date}</strong></p>
-            <p>Contact Person:<strong> ${data.contact_person}</strong></p>
-          </div>
-        </div>
-      `;
+                <div class="text-left space-y-2">
+                    <div class="grid grid-cols-2 gap-2 text-xs lg:text-sm">
+                        <p>Agent Code:<strong> ${data.agent_code}</strong></p>
+                        <p>Client Name:<strong> ${data.client_name}</strong></p>
+                        <p>Complete Address:<strong> ${data.address_name}</strong></p>
+                        <p>Contact:<strong> ${data.contact}</strong></p>
+                        <p>Payment Term:<strong> ${data.payment_term}</strong></p>
+                        <p>Payment Type:<strong> ${data.payment_type}</strong></p>
+                    </div>
+                    <p class="text-xs lg:text-sm">Discount/Deals:<strong> ${data.discount_deals}</strong></p>
+                    <p class="text-xs lg:text-sm">Tie-up Pharmacy/Doctors:<strong> ${data.tie_up_pharmacy}</strong></p>
+                    <p class="text-xs lg:text-sm">Rebates Given:<strong> ${data.rebates_given}</strong></p>
+                    <div class="grid grid-cols-2 gap-2 text-xs lg:text-sm">
+                        <p>Clinic Date:<strong> ${data.clinic_date}</strong></p>
+                        <p>Delivery Date:<strong> ${data.deliver_date}</strong></p>
+                        <p>Contact Person:<strong> ${data.contact_person}</strong></p>
+                    </div>
+                </div>
+            `;
+
+            // Check if add_img exists and is a string
+            if (data.add_img && typeof data.add_img === 'string') {
+                try {
+                    data.add_img = JSON.parse(data.add_img);
+                } catch (e) {
+                    console.error("Error parsing add_img JSON:", e);
+                    data.add_img = [];
+                }
+            }
+
+            // Display uploaded images
+            if (Array.isArray(data.add_img) && data.add_img.length > 0) {
+                html += `<div class="mt-4">
+                    <p class="font-semibold text-sm">Uploaded Images:</p>
+                    <p class="text-blue-600 underline">`;
+
+                data.add_img.forEach((img, index) => {
+                    html += `<a href="${img}" target="_blank">Image ${index + 1}</a>`;
+                    if (index !== data.add_img.length - 1) {
+                        html += " | ";
+                    }
+                });
+
+                html += `</p></div>`;
+            }
 
             // Append images if available
             if (data.sketch_map) {
@@ -107,70 +133,122 @@
                  </p>`;
             }
 
-            // Show modal using SweetAlert2 with Approve and Close buttons
+            // Show modal with Approve, Delete, and Close buttons
             Swal.fire({
                 title: 'Client Data Details',
                 html: html,
                 width: '600px',
                 showCancelButton: true,
+                showDenyButton: true,
                 confirmButtonText: 'Approve',
+                denyButtonText: 'Reject',
                 cancelButtonText: 'Close'
             }).then((result) => {
-                if (result.isConfirmed) {
-                    // Get CSRF token from meta tag
-                    const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-                    // Show loading modal with a spinner
+                if (result.isConfirmed) {
+                    approveData(data.id, token);
+                } else if (result.isDenied) {
+                    deleteData(data.id, token);
+                }
+            });
+        }
+
+        function approveData(id, token) {
+            Swal.fire({
+                title: 'Approving...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            fetch('/approve-data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': token
+                },
+                body: JSON.stringify({
+                    id: id,
+                    status: 'approved'
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('card-' + id).remove();
                     Swal.fire({
-                        title: 'Approving...',
+                        icon: 'success',
+                        title: 'Approved',
+                        text: 'The data has been approved!',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                } else {
+                    throw new Error('Approval failed');
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message
+                });
+            });
+        }
+
+        function deleteData(id, token) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This action cannot be undone!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Deleting...',
                         allowOutsideClick: false,
                         didOpen: () => {
                             Swal.showLoading();
                         }
                     });
 
-                    // Send AJAX request to update status
-                    fetch('/approve-data', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': token
-                            },
-                            body: JSON.stringify({
-                                id: data.id,
-                                status: 'approved'
-                            })
-                        })
-                        .then(response => {
-                            if (response.ok) {
-                                // Remove the approved card from the DOM
-                                const card = document.getElementById('card-' + data.id);
-                                if (card) {
-                                    card.remove();
-                                }
-                                // Close the loading modal and show a success message
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Approved',
-                                    text: 'The data has been approved!',
-                                    timer: 2000,
-                                    showConfirmButton: false
-                                });
-                            } else {
-                                throw new Error('Approval failed');
-                            }
-                        })
-                        .catch(error => {
+                    fetch('/delete-datax', {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': token
+                        },
+                        body: JSON.stringify({ id: id })
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            document.getElementById('card-' + id).remove();
                             Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: error.message
+                                icon: 'success',
+                                title: 'Deleted',
+                                text: 'The data has been deleted!',
+                                timer: 2000,
+                                showConfirmButton: false
                             });
+                        } else {
+                            throw new Error('Deletion failed');
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: error.message
                         });
+                    });
                 }
             });
         }
     </script>
+
 </body>
 
 </html>

@@ -118,6 +118,31 @@
           </div>
         </div>
       `;
+        // Check if add_img exists and is a string
+        if (data.add_img && typeof data.add_img === 'string') {
+                try {
+                    data.add_img = JSON.parse(data.add_img);
+                } catch (e) {
+                    console.error("Error parsing add_img JSON:", e);
+                    data.add_img = [];
+                }
+            }
+
+            // Display uploaded images
+            if (Array.isArray(data.add_img) && data.add_img.length > 0) {
+                html += `<div class="mt-4">
+                    <p class="font-semibold text-sm">Uploaded Images:</p>
+                    <p class="text-blue-600 underline">`;
+
+                data.add_img.forEach((img, index) => {
+                    html += `<a href="${img}" target="_blank">Image ${index + 1}</a>`;
+                    if (index !== data.add_img.length - 1) {
+                        html += " | ";
+                    }
+                });
+
+                html += `</p></div>`;
+            }
 
       // Append images if available
       if (data.sketch_map) {

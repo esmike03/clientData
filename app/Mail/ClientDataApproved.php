@@ -32,17 +32,6 @@ class ClientDataApproved extends Mailable
      *
      * @return $this
      */
-    // public function build()
-    // {
-    //     // Generate PDF from view
-    //     $pdf = PDF::loadView('pdf.client_data', ['clientData' => $this->clientData]);
-
-    //     return $this->subject('Client Data Approved')
-    //                 ->view('emails.client_data_approved')
-    //                 ->attachData($pdf->output(), 'client_data.pdf', [
-    //                     'mime' => 'application/pdf',
-    //                 ]);
-    // }
 
     public function build()
     {

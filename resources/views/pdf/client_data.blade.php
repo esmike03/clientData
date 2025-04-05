@@ -116,7 +116,7 @@
         <tr>
             <!-- Prepared By (Left) -->
             <td style="text-align: center; vertical-align: top; width: 50%;">
-                <p style="text-align: center;"><strong>Prepared By:</strong><br>{{ $clientData->prepared_by }}</p>
+                <p style="text-align: center;"><strong>Prepared By: </strong> {{ $clientData->prepared_by }}</p>
                 @if ($clientData->prepared_signature)
                     <img src="{{ $clientData->prepared_signature }}" alt="Signature" style="max-width: 200px;">
                 @endif
@@ -124,7 +124,7 @@
 
             <!-- Approved By (Right) -->
             <td style="text-align: center; vertical-align: top; width: 50%;">
-                <p><strong>Approved By:</strong><br>Julius Adlaon</p>{{-- <p><strong>Approved By:</strong><br>{{ $clientData->prepared_by ?? 'N/A' }}</p> --}}
+                <p><strong>Approved By:</strong>Julius Adlaon</p>{{-- <p><strong>Approved By:</strong><br>{{ $clientData->prepared_by ?? 'N/A' }}</p> --}}
                 @if ($clientData->approved_by)
                     <img src="{{ $clientData->approved_by }}" alt="Signature" style="max-width: 200px;">
                 @endif

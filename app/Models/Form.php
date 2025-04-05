@@ -27,6 +27,8 @@ class Form extends Model
         'prepared_by',
         'prepared_signature',
         'status',
+        'add_img',
+        'optioner',
         'approved_by', // New fields added
     ];
 }

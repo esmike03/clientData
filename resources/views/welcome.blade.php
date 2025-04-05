@@ -48,6 +48,20 @@
                 </div>
             @endif
 
+            <div class=" mt-2 gap-x-2 flex">
+                <label class="flex items-center space-x-2">
+                    <input type="radio" name="optioner" value="new" checked
+                        class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                    <span>New</span>
+                </label>
+
+                <label class="flex items-center space-x-2">
+                    <input type="radio" name="optioner" value="revise"
+                        class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                    <span>Revise</span>
+                </label>
+
+            </div>
             <div class="mt-4 grid grid-cols-2 gap-4">
                 <!-- Date -->
                 <div>
@@ -127,12 +141,12 @@
             <div class="mt-4 grid grid-cols-2 gap-4">
                 <div>
                     <strong class="text-gray-800 text-sm">Clinic Schedule:</strong>
-                    <input type="date" name="clinic_date" id="clinic_date" value="{{ old('clinic_date') }}"
+                    <input type="text" name="clinic_date" id="clinic_date" value="{{ old('clinic_date') }}"
                         class="rounded-md border-1 shadow-md border-gray-200 p-1 w-full bg-white">
                 </div>
                 <div>
                     <strong class="text-gray-800 text-sm">Delivery Schedule:</strong>
-                    <input type="date" name="deliver_date" id="deliver_date" value="{{ old('deliver_date') }}"
+                    <input type="text" name="deliver_date" id="deliver_date" value="{{ old('deliver_date') }}"
                         class="rounded-md border-1 shadow-md border-gray-200 p-1 w-full bg-white">
                 </div>
                 <div>
@@ -144,12 +158,27 @@
             </div>
 
             <!-- Sketch Map (Image Upload) -->
-            <div class="mb-4 mt-4">
-                <label class="block font-bold mb-2"><strong class="text-gray-800 text-sm">SKETCH MAP (UPLOAD
-                        IMAGE)</strong></label>
-                <input type="file" name="sketch_map" id="sketch_map" value="{{ old('sketch_map') }}"
-                    class="w-full border border-gray-200 bg-white shadow-md rounded p-2" accept="image/*">
+            <div class="mt-4 grid grid-cols-2 gap-4">
+                <div class="mb-4 mt-4">
+                    <label class="block font-bold mb-2"><strong class="text-gray-800 text-sm">SKETCH MAP (UPLOAD
+                            IMAGE)</strong></label>
+                    <input type="file" name="sketch_map" id="sketch_map" value="{{ old('sketch_map') }}"
+                        class="w-full border border-gray-200 bg-white shadow-md rounded p-2" accept="image/*">
+                </div>
+                <div class="mb-4 mt-4">
+                    <label class="block font-bold mb-2">
+                        <strong class="text-gray-800 text-sm">Additional Files (UPLOAD IMAGE)</strong>
+                    </label>
+                    <input type="file" name="add_img[]" id="add_img"
+                        class="w-full border border-gray-200 bg-white shadow-md rounded p-2" accept="image/*" multiple
+                        onchange="validateFiles(this)">
+                    <p id="file-error" class="text-red-500 text-sm mt-1"></p>
+                </div>
+
+
+
             </div>
+
 
             <!-- Prepared By & Approved By -->
             <div class="flex justify-between mt-6">
@@ -259,6 +288,18 @@
             if (canvasId === "preparedSignature") {
                 window.preparedSignaturePad.clear();
                 document.getElementById(inputId).value = "";
+            }
+        }
+
+        function validateFiles(input) {
+            const maxFiles = 3;
+            const errorMsg = document.getElementById("file-error");
+
+            if (input.files.length > maxFiles) {
+                errorMsg.textContent = `You can only upload up to ${maxFiles} images.`;
+                input.value = ""; // Reset file input
+            } else {
+                errorMsg.textContent = "";
             }
         }
     </script>
